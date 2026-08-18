@@ -74,18 +74,53 @@ rag_chain = (
     | StrOutputParser()
 )
 
-# step 8 — test it
-print("\n" + "="*50)
-print("Testing naive RAG")
-print("="*50)
+# add this function to main.py
+# it shows you exactly what happens at each step
 
-test_questions = [
-    "What documents do I need to open a savings account?",
-    "What is the interest rate for personal loan?",
-    "How do I file a complaint?"
-]
-
-for question in test_questions:
-    print(f"\nQ: {question}")
+def debug_rag_pipeline(question):
+    print("\n" + "="*50)
+    print(f"DEBUGGING: {question}")
+    print("="*50)
+    
+    # STEP 1 — RETRIEVAL
+    # what chunks did the system find?
+    print("\n--- STEP 1: RETRIEVAL ---")
+    retrieved_docs = retriever.invoke(question)
+    print(f"Retrieved {len(retrieved_docs)} chunks")
+    for i, doc in enumerate(retrieved_docs):
+        print(f"\nChunk {i+1}:")
+        print(f"  Source: {doc.metadata.get('source', 'unknown')}")
+        print(f"  Page: {doc.metadata.get('page', 'unknown')}")
+        print(f"  Content: {doc.page_content[:150]}...")
+    
+    # STEP 2 — AUGMENTATION
+    # what does the full prompt look like after context is injected?
+    print("\n--- STEP 2: AUGMENTATION ---")
+    context = format_docs(retrieved_docs)
+    print(f"Context length: {len(context)} characters")
+    print(f"Context preview: {context[:300]}...")
+    
+    augmented_prompt = f"""
+    Context: {context}
+    
+    Question: {question}
+    """
+    print(f"Full prompt length: {len(augmented_prompt)} characters")
+    
+    # STEP 3 — GENERATION
+    # what answer does the LLM produce from this context?
+    print("\n--- STEP 3: GENERATION ---")
     answer = rag_chain.invoke(question)
-    print(f"A: {answer}")
+    print(f"Answer: {answer}")
+    
+    return {
+        "question": question,
+        "retrieved_chunks": len(retrieved_docs),
+        "context_length": len(context),
+        "answer": answer
+    }
+
+# test the debug function
+result = debug_rag_pipeline(
+    "What is the minimum balance for savings account?"
+)
