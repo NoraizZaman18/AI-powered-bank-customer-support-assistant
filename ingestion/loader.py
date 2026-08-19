@@ -7,6 +7,41 @@ from langchain_community.document_loaders import (
 )
 from langchain_core.documents import Document
 
+from langchain_community.document_loaders import WebBaseLoader
+#  web page loader
+def load_webpage(url):
+    """
+    Load content from a single web page URL.
+    """
+    try:
+        loader = WebBaseLoader(url)
+        documents = loader.load()
+        
+        for doc in documents:
+            doc.metadata["source"] = url
+            doc.metadata["file_type"] = "webpage"
+        
+        print(f"Loaded webpage: {url}")
+        return documents
+        
+    except Exception as e:
+        print(f"Failed to load {url}: {e}")
+        return []
+
+def load_multiple_urls(urls):
+    """
+    Load content from multiple URLs at once.
+    """
+    all_documents = []
+    
+    for url in urls:
+        docs = load_webpage(url)
+        all_documents.extend(docs)
+    
+    print(f"Loaded {len(all_documents)} pages from {len(urls)} URLs")
+    return all_documents
+
+# pdf loader 
 
 def load_single_pdf(pdf_path):
     """Load one PDF file and return its pages."""
@@ -41,7 +76,7 @@ def load_single_pdf(pdf_path):
 
     return pages
 
-
+#  doc loader 
 def load_docx(file_path):
     """Load one Word document."""
 
@@ -56,7 +91,7 @@ def load_docx(file_path):
 
     return documents
 
-
+# txt files loader
 def load_txt(file_path):
     """Load one plain text file."""
 
@@ -75,6 +110,8 @@ def load_txt(file_path):
 
     return documents
 
+
+#  check which funcrtion we need to run accoind to the file types
 
 def load_document(file_path):
     """
@@ -97,56 +134,39 @@ def load_document(file_path):
         return []
 
 
-def load_all_documents(folder_path):
-    """
-    Load all supported documents from a folder.
-    """
-
+def load_all_documents(folder_path, urls=None):
     all_documents = []
-
-    supported = (
-        ".pdf",
-        ".docx",
-        ".txt"
-    )
-
-    files = [
-        f
-        for f in os.listdir(folder_path)
-        if f.lower().endswith(supported)
-    ]
-
-    if not files:
-        print(f"No supported documents found in {folder_path}")
-        return []
-
+    supported = (".pdf", ".docx", ".txt")
+    
+    # load files from folder
+    files = [f for f in os.listdir(folder_path) if f.endswith(supported)]
     for filename in files:
-
-        file_path = os.path.join(
-            folder_path,
-            filename
-        )
-
-        documents = load_document(file_path)
-
-        all_documents.extend(documents)
-
-    print(
-        f"\nTotal loaded pages/documents: "
-        f"{len(all_documents)}"
-    )
-
+        file_path = os.path.join(folder_path, filename)
+        docs = load_document(file_path)
+        all_documents.extend(docs)
+    
+    # load web pages if provided
+    if urls:
+        web_docs = load_multiple_urls(urls)
+        all_documents.extend(web_docs)
+    
+    print(f"\nTotal documents loaded: {len(all_documents)}")
     return all_documents
 
 
-# Test the loader
+
+#  main 
 if __name__ == "__main__":
 
+    test_urls = [
+        "https://www.sbp.org.pk/bsd/2023/C3.htm"
+    ]
+
     documents = load_all_documents(
-        "data/documents/"
+        "data/documents/",
+        urls=test_urls
     )
 
-    print("\nFirst 200 characters:")
-
+    print("\nFirst document:")
     if documents:
-        print(documents[0].page_content[:200])
+        print(documents[0].page_content[:300])
