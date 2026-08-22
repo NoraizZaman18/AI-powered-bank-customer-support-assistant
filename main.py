@@ -140,7 +140,7 @@ from ingestion.cleaner import clean_documents
 
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-from ingestion.chunker import fixed_size_chunking
+from ingestion.chunker import recursive_chunking
 
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
@@ -192,7 +192,11 @@ print(f"\nTotal documents after cleaning: {len(documents)}")
 # STEP 3 — CHUNK DOCUMENTS
 # ============================================================
 
-chunks = fixed_size_chunking(
+print("\n" + "=" * 60)
+print("STEP 3 — CHUNKING DOCUMENTS")
+print("=" * 60)
+
+chunks = recursive_chunking(
     documents,
     chunk_size=500,
     chunk_overlap=50
