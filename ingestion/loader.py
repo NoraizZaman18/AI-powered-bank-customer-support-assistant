@@ -223,33 +223,3 @@ def load_all_documents(folder_path, urls=None):
 
 
 
-#  main 
-# if __name__ == "__main__":
-
-#     test_urls = [
-#         "https://www.sbp.org.pk/bsd/2023/C3.htm"
-#     ]
-
-#     documents = load_all_documents(
-#         "data/documents/",
-#         urls=test_urls
-#     )
-
-
-if __name__ == "__main__":
-
-    test_urls = [
-        "https://www.sbp.org.pk/bsd/2023/C3.htm"
-    ]
-
-    documents = load_all_documents(
-        "data/documents/",
-        urls=test_urls
-    )
-
-    print("\nTotal documents:", len(documents))
-
-    for doc in documents:
-        if doc.metadata.get("extraction_method") == "ocr":
-            print("\n===== OCR RESULT =====")
-            print(doc.page_content[:1000])
