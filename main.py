@@ -132,7 +132,12 @@
 # main.py
 
 import os
-
+from ingestion.chunker import (
+    detect_document_types,
+    recommend_overlap,
+    recursive_chunking,
+    analyse_chunk_quality
+)
 from dotenv import load_dotenv
 
 from ingestion.loader import load_all_documents
@@ -192,17 +197,39 @@ print(f"\nTotal documents after cleaning: {len(documents)}")
 # STEP 3 — CHUNK DOCUMENTS
 # ============================================================
 
+# ============================================================
+
 print("\n" + "=" * 60)
-print("STEP 3 — CHUNKING DOCUMENTS")
+print("STEP 3 — DOCUMENT TYPE + CHUNKING")
 print("=" * 60)
 
-chunks = recursive_chunking(
-    documents,
-    chunk_size=500,
-    chunk_overlap=50
-)
+document_types = detect_document_types(documents)
 
-print(f"Created {len(chunks)} chunks")
+final_chunks = []
+
+for source, doc_type in document_types.items():
+
+    print(f"\nProcessing: {source}")
+    print(f"Document type: {doc_type}")
+
+    settings = recommend_overlap(doc_type)
+
+    source_documents = [
+        doc for doc in documents
+        if doc.metadata.get("source") == source
+    ]
+
+    source_chunks = recursive_chunking(
+        source_documents,
+        chunk_size=settings["chunk_size"],
+        chunk_overlap=settings["overlap"]
+    )
+
+    final_chunks.extend(source_chunks)
+
+print(f"\nCreated {len(final_chunks)} final chunks")
+
+analyse_chunk_quality(final_chunks)
 
 # ============================================================
 # STEP 4 — CREATE EMBEDDINGS
@@ -231,7 +258,7 @@ print("STEP 5 — STORING VECTORS")
 print("=" * 60)
 
 vectorstore = Chroma.from_documents(
-    documents=chunks,
+    documents=final_chunks,
     embedding=embeddings,
     persist_directory="./chroma_db"
 )
@@ -459,7 +486,6 @@ Question:
         "context_length": len(context),
         "answer": answer
     }
-
 
 # ============================================================
 # TEST

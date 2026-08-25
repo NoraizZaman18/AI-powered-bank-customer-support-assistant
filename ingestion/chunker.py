@@ -275,6 +275,163 @@ def test_overlap(chunks: List[Document], num_pairs: int = 3):
 
         pairs_shown += 1
 
+def detect_document_types(documents: List[Document]) -> dict:
+    """
+    Detect the type of each PDF separately.
+    """
+
+    # Group pages by PDF source
+    grouped_documents = {}
+
+    for doc in documents:
+        source = doc.metadata.get("source", "unknown")
+
+        if source not in grouped_documents:
+            grouped_documents[source] = []
+
+        grouped_documents[source].append(doc)
+
+    results = {}
+
+    for source, pages in grouped_documents.items():
+
+        # Combine all pages belonging to this PDF
+        content = " ".join(
+            page.page_content.lower()
+            for page in pages
+        )
+
+        filename = source.lower()
+
+        # --------------------------------------------------
+        # 1. Strong filename/document-name signals
+        # --------------------------------------------------
+
+        if "faq" in filename:
+            detected = "faq"
+
+        elif "schedule_of_charges" in filename:
+            detected = "charges"
+
+        elif (
+            "policy" in filename
+            or "loan" in filename
+            or "complaint" in filename
+            or "account_opening" in filename
+            or "credit_card" in filename
+        ):
+            detected = "policy"
+
+        else:
+            # --------------------------------------------------
+            # 2. Content-based detection for unknown documents
+            # --------------------------------------------------
+
+            faq_keywords = [
+                "frequently asked",
+                "question:",
+                "answer:",
+                "q:",
+                "a:"
+            ]
+
+            charges_keywords = [
+                "schedule of charges",
+                "per transaction",
+                "fee:",
+                "charge:",
+                "service charge"
+            ]
+
+            policy_keywords = [
+                "policy",
+                "section",
+                "eligibility",
+                "criteria",
+                "requirements",
+                "terms and conditions"
+            ]
+
+            faq_score = sum(
+                1 for keyword in faq_keywords
+                if keyword in content
+            )
+
+            charges_score = sum(
+                1 for keyword in charges_keywords
+                if keyword in content
+            )
+
+            policy_score = sum(
+                1 for keyword in policy_keywords
+                if keyword in content
+            )
+
+            scores = {
+                "faq": faq_score,
+                "charges": charges_score,
+                "policy": policy_score
+            }
+
+            if max(scores.values()) == 0:
+                detected = "general"
+            else:
+                detected = max(scores, key=scores.get)
+
+        results[source] = detected
+
+        print(f"{source} → {detected}")
+
+    return results
+
+def analyse_chunk_quality(chunks: List[Document]):
+    """
+    Show statistics about your chunks.
+    Run this after chunking to understand chunk distribution.
+    Helps you decide if chunk size needs adjustment.
+    """
+    
+    sizes = [len(c.page_content) for c in chunks]
+    
+    print("\n" + "="*50)
+    print("CHUNK QUALITY ANALYSIS")
+    print("="*50)
+    print(f"Total chunks:     {len(chunks)}")
+    print(f"Average size:     {sum(sizes) // len(sizes)} chars")
+    print(f"Smallest chunk:   {min(sizes)} chars")
+    print(f"Largest chunk:    {max(sizes)} chars")
+    
+    # distribution
+    small = sum(1 for s in sizes if s < 200)
+    medium = sum(1 for s in sizes if 200 <= s < 600)
+    large = sum(1 for s in sizes if s >= 600)
+    
+    print(f"\nSize distribution:")
+    print(f"  Small (<200):    {small} chunks ({small*100//len(chunks)}%)")
+    print(f"  Medium (200-600):{medium} chunks ({medium*100//len(chunks)}%)")
+    print(f"  Large (>600):    {large} chunks ({large*100//len(chunks)}%)")
+    
+    # per document stats
+    print(f"\nChunks per document:")
+    doc_counts = {}
+    for chunk in chunks:
+        source = chunk.metadata.get("source", "unknown")
+        doc_counts[source] = doc_counts.get(source, 0) + 1
+    
+    for source, count in sorted(doc_counts.items()):
+        print(f"  {source}: {count} chunks")
+    
+    # quality warnings
+    print(f"\nQuality warnings:")
+    if small > len(chunks) * 0.2:
+        print(f"  WARNING: {small} chunks are very small (<200 chars)")
+        print(f"  Consider increasing chunk_size or min_length filter")
+    if large > len(chunks) * 0.3:
+        print(f"  WARNING: {large} chunks are very large (>600 chars)")
+        print(f"  Consider decreasing chunk_size")
+    if small <= len(chunks) * 0.2 and large <= len(chunks) * 0.3:
+        print(f"  OK: Chunk size distribution looks healthy")
+
 
 def recommend_overlap(document_type: str) -> dict:
     """
@@ -297,6 +454,96 @@ def recommend_overlap(document_type: str) -> dict:
 
 # ── MAIN TEST BLOCK ──────────────────────────────────────────────────────────
 
+# if __name__ == "__main__":
+
+#     from loader import load_all_documents
+#     from cleaner import clean_documents
+
+#     # 1. Load and clean
+#     documents = load_all_documents("data/documents/")
+#     documents = clean_documents(documents)
+
+    # print("\n" + "=" * 50)
+    # print("COMPARING CHUNKING STRATEGIES")
+    # print("=" * 50)
+
+    # 2. All strategies
+    # fixed_chunks     = fixed_size_chunking(documents, chunk_size=500, chunk_overlap=50)
+    # sentence_chunks  = sentence_chunking(documents, sentences_per_chunk=5, overlap_sentences=1)
+    # paragraph_chunks = paragraph_chunking(documents, min_length=100, max_length=1000)
+    # recursive_chunks = recursive_chunking(documents, chunk_size=500, chunk_overlap=50)
+    # semantic_chunks  = semantic_chunking(documents, breakpoint_type="percentile", breakpoint_threshold=95)
+
+    # 3. Results summary
+    # print("\n" + "=" * 50)
+    # print("RESULTS")
+    # print("=" * 50)
+    # print(f"Fixed size: {len(fixed_chunks)} chunks")
+    # print(f"Sentence:   {len(sentence_chunks)} chunks")
+    # print(f"Paragraph:  {len(paragraph_chunks)} chunks")
+    # print(f"Recursive:  {len(recursive_chunks)} chunks")
+    # print(f"Semantic:   {len(semantic_chunks)} chunks")
+
+    # 4. Sample chunks
+    # print("\n" + "=" * 50)
+    # print("SAMPLE CHUNKS")
+    # print("=" * 50)
+
+    # strategies = [
+    #     ("FIXED",     fixed_chunks),
+    #     ("SENTENCE",  sentence_chunks),
+    #     ("PARAGRAPH", paragraph_chunks),
+    #     ("RECURSIVE", recursive_chunks),
+    #     ("SEMANTIC",  semantic_chunks),
+    # ]
+
+    # for strategy, chunk_list in strategies:
+    #     print(f"\n--- {strategy} ---")
+    #     for i, chunk in enumerate(chunk_list[:2]):
+    #         print(f"\nChunk {i}")
+    #         print(f"Source:   {chunk.metadata.get('source', 'unknown')}")
+    #         print(f"Page:     {chunk.metadata.get('page', 'unknown')}")
+    #         print(f"Size:     {len(chunk.page_content)} chars")
+    #         print(f"Strategy: {chunk.metadata.get('chunking_strategy', 'unknown')}")
+    #         print(f"Content:\n{chunk.page_content[:500]}")
+
+    # ── TOPIC 14 — Semantic vs Paragraph comparison ──────────────────────────
+
+    # print("\n" + "=" * 50)
+    # print("TOPIC 14 — SEMANTIC CHUNKING COMPARISON")
+    # print("=" * 50)
+
+    # loan_paragraph_chunks = [
+    #     chunk for chunk in paragraph_chunks
+    #     if "loan_policy.pdf" in chunk.metadata.get("source", "")
+    # ]
+    # loan_semantic_chunks = [
+    #     chunk for chunk in semantic_chunks
+    #     if "loan_policy.pdf" in chunk.metadata.get("source", "")
+    # ]
+
+    # print(f"\nLoan Policy Comparison")
+    # print(f"Paragraph chunks: {len(loan_paragraph_chunks)}")
+    # print(f"Semantic chunks:  {len(loan_semantic_chunks)}")
+
+    # print("\n" + "-" * 50)
+    # print("PARAGRAPH CHUNKS — LOAN POLICY")
+    # print("-" * 50)
+    # for i, chunk in enumerate(loan_paragraph_chunks):
+    #     print(f"\nChunk {i}")
+    #     print(f"Size: {len(chunk.page_content)} chars")
+    #     print(chunk.page_content[:1000])
+
+    # print("\n" + "-" * 50)
+    # print("SEMANTIC CHUNKS — LOAN POLICY")
+    # print("-" * 50)
+    # for i, chunk in enumerate(loan_semantic_chunks):
+    #     print(f"\nChunk {i}")
+    #     print(f"Size: {len(chunk.page_content)} chars")
+    #     print(chunk.page_content[:1000])
+
+    # ── TOPIC 15 — Overlap verification ──────────────────────────────────────
+
 if __name__ == "__main__":
 
     from loader import load_all_documents
@@ -306,95 +553,61 @@ if __name__ == "__main__":
     documents = load_all_documents("data/documents/")
     documents = clean_documents(documents)
 
-    print("\n" + "=" * 50)
-    print("COMPARING CHUNKING STRATEGIES")
-    print("=" * 50)
-
-    # 2. All strategies
-    fixed_chunks     = fixed_size_chunking(documents, chunk_size=500, chunk_overlap=50)
-    sentence_chunks  = sentence_chunking(documents, sentences_per_chunk=5, overlap_sentences=1)
-    paragraph_chunks = paragraph_chunking(documents, min_length=100, max_length=1000)
-    recursive_chunks = recursive_chunking(documents, chunk_size=500, chunk_overlap=50)
-    semantic_chunks  = semantic_chunking(documents, breakpoint_type="percentile", breakpoint_threshold=95)
-
-    # 3. Results summary
-    print("\n" + "=" * 50)
-    print("RESULTS")
-    print("=" * 50)
-    print(f"Fixed size: {len(fixed_chunks)} chunks")
-    print(f"Sentence:   {len(sentence_chunks)} chunks")
-    print(f"Paragraph:  {len(paragraph_chunks)} chunks")
-    print(f"Recursive:  {len(recursive_chunks)} chunks")
-    print(f"Semantic:   {len(semantic_chunks)} chunks")
-
-    # 4. Sample chunks
-    print("\n" + "=" * 50)
-    print("SAMPLE CHUNKS")
-    print("=" * 50)
-
-    strategies = [
-        ("FIXED",     fixed_chunks),
-        ("SENTENCE",  sentence_chunks),
-        ("PARAGRAPH", paragraph_chunks),
-        ("RECURSIVE", recursive_chunks),
-        ("SEMANTIC",  semantic_chunks),
-    ]
-
-    for strategy, chunk_list in strategies:
-        print(f"\n--- {strategy} ---")
-        for i, chunk in enumerate(chunk_list[:2]):
-            print(f"\nChunk {i}")
-            print(f"Source:   {chunk.metadata.get('source', 'unknown')}")
-            print(f"Page:     {chunk.metadata.get('page', 'unknown')}")
-            print(f"Size:     {len(chunk.page_content)} chars")
-            print(f"Strategy: {chunk.metadata.get('chunking_strategy', 'unknown')}")
-            print(f"Content:\n{chunk.page_content[:500]}")
-
-    # ── TOPIC 14 — Semantic vs Paragraph comparison ──────────────────────────
-
-    print("\n" + "=" * 50)
-    print("TOPIC 14 — SEMANTIC CHUNKING COMPARISON")
-    print("=" * 50)
-
-    loan_paragraph_chunks = [
-        chunk for chunk in paragraph_chunks
-        if "loan_policy.pdf" in chunk.metadata.get("source", "")
-    ]
-    loan_semantic_chunks = [
-        chunk for chunk in semantic_chunks
-        if "loan_policy.pdf" in chunk.metadata.get("source", "")
-    ]
-
-    print(f"\nLoan Policy Comparison")
-    print(f"Paragraph chunks: {len(loan_paragraph_chunks)}")
-    print(f"Semantic chunks:  {len(loan_semantic_chunks)}")
-
-    print("\n" + "-" * 50)
-    print("PARAGRAPH CHUNKS — LOAN POLICY")
-    print("-" * 50)
-    for i, chunk in enumerate(loan_paragraph_chunks):
-        print(f"\nChunk {i}")
-        print(f"Size: {len(chunk.page_content)} chars")
-        print(chunk.page_content[:1000])
-
-    print("\n" + "-" * 50)
-    print("SEMANTIC CHUNKS — LOAN POLICY")
-    print("-" * 50)
-    for i, chunk in enumerate(loan_semantic_chunks):
-        print(f"\nChunk {i}")
-        print(f"Size: {len(chunk.page_content)} chars")
-        print(chunk.page_content[:1000])
-
-    # ── TOPIC 15 — Overlap verification ──────────────────────────────────────
+    # ── TOPIC 15 — Overlap verification ──
 
     print("\n" + "=" * 50)
     print("TOPIC 15 — OVERLAP VERIFICATION")
     print("=" * 50)
 
     settings = recommend_overlap("policy")
+
     chunks_with_overlap = fixed_size_chunking(
         documents,
         chunk_size=settings["chunk_size"],
         chunk_overlap=settings["overlap"]
     )
+
     test_overlap(chunks_with_overlap, num_pairs=3)
+
+    # ── TOPIC 16 — Document-specific chunking ──
+
+    print("\nDetecting document types...")
+
+    document_types = detect_document_types(documents)
+
+    final_chunks = []
+
+    # Process each PDF separately
+    for source, doc_type in document_types.items():
+
+        print(f"\nProcessing: {source}")
+        print(f"Document type: {doc_type}")
+
+        # Get settings for THIS document type
+        settings = recommend_overlap(doc_type)
+
+        # Get all pages belonging to this PDF
+        source_documents = [
+            doc
+            for doc in documents
+            if doc.metadata.get("source") == source
+        ]
+
+        # Chunk this PDF using its own settings
+        chunks = recursive_chunking(
+            source_documents,
+            chunk_size=settings["chunk_size"],
+            chunk_overlap=settings["overlap"]
+        )
+
+        final_chunks.extend(chunks)
+
+    # ── Final results ──
+
+    print("\n" + "=" * 50)
+    print("FINAL CHUNKING RESULTS")
+    print("=" * 50)
+
+    print(f"Total final chunks: {len(final_chunks)}")
+
+    analyse_chunk_quality(final_chunks)
