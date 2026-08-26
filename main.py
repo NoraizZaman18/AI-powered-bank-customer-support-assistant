@@ -136,7 +136,8 @@ from ingestion.chunker import (
     detect_document_types,
     recommend_overlap,
     recursive_chunking,
-    analyse_chunk_quality
+    analyse_chunk_quality,
+    enrich_metadata
 )
 from dotenv import load_dotenv
 
@@ -200,7 +201,7 @@ print(f"\nTotal documents after cleaning: {len(documents)}")
 # ============================================================
 
 print("\n" + "=" * 60)
-print("STEP 3 — DOCUMENT TYPE + CHUNKING")
+print("STEP 3 — DOCUMENT TYPE + CHUNKING + METADATA")
 print("=" * 60)
 
 document_types = detect_document_types(documents)
@@ -215,21 +216,42 @@ for source, doc_type in document_types.items():
     settings = recommend_overlap(doc_type)
 
     source_documents = [
-        doc for doc in documents
+        doc
+        for doc in documents
         if doc.metadata.get("source") == source
     ]
 
-    source_chunks = recursive_chunking(
+    chunks = recursive_chunking(
         source_documents,
         chunk_size=settings["chunk_size"],
         chunk_overlap=settings["overlap"]
     )
 
-    final_chunks.extend(source_chunks)
+    # Add enriched metadata
+    chunks = enrich_metadata(chunks)
 
-print(f"\nCreated {len(final_chunks)} final chunks")
+    final_chunks.extend(chunks)
+
+
+print("\n" + "=" * 60)
+print("FINAL CHUNKING RESULTS")
+print("=" * 60)
+
+print(f"Created {len(final_chunks)} final chunks")
 
 analyse_chunk_quality(final_chunks)
+
+print("\n" + "=" * 60)
+print("SAMPLE CHUNK METADATA")
+print("=" * 60)
+
+for i, chunk in enumerate(final_chunks[:3]):
+
+    print(f"\nChunk {i + 1}")
+    print("-" * 40)
+
+    for key, value in chunk.metadata.items():
+        print(f"{key}: {value}")
 
 # ============================================================
 # STEP 4 — CREATE EMBEDDINGS

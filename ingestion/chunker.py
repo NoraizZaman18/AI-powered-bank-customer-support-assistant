@@ -451,9 +451,123 @@ def recommend_overlap(document_type: str) -> dict:
     print(f"Recommended for {document_type}: {settings}")
     return settings
 
+# add to ingestion/chunker.py
 
+def enrich_metadata(chunks: List[Document],
+                    additional_metadata: dict = None) -> List[Document]:
+    """
+    Add rich metadata to every chunk.
+    Call this after any chunking function.
+    
+    Adds:
+    - document_id: unique identifier for source document
+    - word_count: number of words in chunk
+    - has_numbers: whether chunk contains numerical data
+    - section_hint: likely section based on content keywords
+    - ingestion_date: when document was processed
+    """
+    
+    from datetime import datetime
+    import hashlib
+    
+    enriched = []
+    
+    for chunk in chunks:
+        text = chunk.page_content
+        source = chunk.metadata.get("source", "unknown")
+        
+        # generate unique ID for this chunk
+        chunk_id = hashlib.md5(
+            f"{source}_{text[:50]}".encode()
+        ).hexdigest()[:12]
+        
+        # detect section from content
+        section = detect_section(text)
+        
+        # check if chunk contains numerical data
+        has_numbers = bool(re.search(r'\d+', text))
+        
+        # build enriched metadata
+        enriched_metadata = {
+            **chunk.metadata,
+            "chunk_id": chunk_id,
+            "word_count": len(text.split()),
+            "char_count": len(text),
+            "has_numbers": has_numbers,
+            "section": section,
+            "ingestion_date": datetime.now().strftime("%Y-%m-%d"),
+        }
+        
+        # add any extra metadata passed in
+        if additional_metadata:
+            enriched_metadata.update(additional_metadata)
+        
+        enriched.append(Document(
+            page_content=text,
+            metadata=enriched_metadata
+        ))
+    
+    return enriched
+
+
+def detect_section(text: str) -> str:
+    """
+    Detect the likely section of a bank document from content.
+    Used for metadata enrichment.
+    """
+    
+    text_lower = text.lower()
+    
+    section_keywords = {
+        "eligibility": ["eligible", "eligibility", "qualify", "requirement"],
+        "charges": ["rs.", "fee", "charge", "penalty", "cost"],
+        "documents": ["cnic", "document", "required", "submit"],
+        "process": ["apply", "process", "step", "procedure", "how to"],
+        "policy": ["policy", "rule", "regulation", "terms"],
+        "contact": ["phone", "email", "helpline", "contact", "branch"]
+    }
+    
+    for section, keywords in section_keywords.items():
+        if any(kw in text_lower for kw in keywords):
+            return section
+    
+    return "general"
+
+
+# # update select_chunking_strategy to always enrich metadata
+# def chunk_documents(documents: List[Document],
+#                     document_type: str = "auto",
+#                     extra_metadata: dict = None) -> List[Document]:
+#     """
+#     Main function to call for chunking.
+#     Automatically:
+#     1. Detects document type if not specified
+#     2. Selects best chunking strategy
+#     3. Enriches metadata on all chunks
+    
+#     This is the only chunking function you need to call from main.py
+#     """
+    
+#     if document_type == "auto":
+#         document_type = detect_document_type(documents)
+    
+#     settings = recommend_overlap(document_type)
+    
+#     if document_type in ["policy", "faq"]:
+#         chunks = paragraph_chunking(documents, 100, settings["chunk_size"])
+#     else:
+#         chunks = recursive_chunking(
+#             documents,
+#             settings["chunk_size"],
+#             settings["overlap"]
+#         )
+    
+#     chunks = enrich_metadata(chunks, extra_metadata)
+#     analyse_chunk_quality(chunks)
+    
+#     return chunks
 # ── MAIN TEST BLOCK ──────────────────────────────────────────────────────────
-
+#  this main is usefull if you want to rune all chunking function comapre chunking function the code is also availbe 
 # if __name__ == "__main__":
 
 #     from loader import load_all_documents
