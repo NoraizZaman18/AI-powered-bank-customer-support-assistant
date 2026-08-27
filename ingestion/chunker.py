@@ -532,7 +532,75 @@ def detect_section(text: str) -> str:
             return section
     
     return "general"
+# add to ingestion/chunker.py
 
+def parent_child_chunking(documents: List[Document],
+                          parent_chunk_size: int = 1500,
+                          child_chunk_size: int = 300,
+                          child_overlap: int = 30) -> dict:
+    """
+    Create two levels of chunks:
+    - Parent chunks: large, provide full context to LLM
+    - Child chunks: small, precise embeddings for search
+    
+    Returns dict with:
+    - parents: list of large chunks stored in regular dict
+    - children: list of small chunks stored in vector DB
+    
+    Flow:
+    1. User asks question
+    2. Child chunk embedding matches question precisely
+    3. System finds parent of that child
+    4. LLM receives full parent chunk for complete context
+    """
+    
+    # create parent chunks — large
+    parent_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=parent_chunk_size,
+        chunk_overlap=100,
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )
+    
+    # create child chunks — small
+    child_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=child_chunk_size,
+        chunk_overlap=child_overlap,
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )
+    
+    parents = parent_splitter.split_documents(documents)
+    all_children = []
+    
+    for parent_idx, parent in enumerate(parents):
+        # create unique parent ID
+        parent_id = f"parent_{parent.metadata.get('source', 'doc')}_{parent_idx}"
+        parent.metadata["parent_id"] = parent_id
+        parent.metadata["chunk_type"] = "parent"
+        parent.metadata["chunk_index"] = parent_idx
+        
+        # create children from this parent
+        children = child_splitter.split_documents([parent])
+        
+        for child_idx, child in enumerate(children):
+            # link child to its parent
+            child.metadata["parent_id"] = parent_id
+            child.metadata["chunk_type"] = "child"
+            child.metadata["child_index"] = child_idx
+            child.metadata["parent_content_preview"] = (
+                parent.page_content[:100]
+            )
+        
+        all_children.extend(children)
+    
+    print(f"\nParent-child chunking complete:")
+    print(f"  Parent chunks: {len(parents)} (size ~{parent_chunk_size} chars)")
+    print(f"  Child chunks:  {len(all_children)} (size ~{child_chunk_size} chars)")
+    print(f"  Average children per parent: {len(all_children) // len(parents)}")
+    
+    return {
+        "parents": parents,
+        "children": all_children
+    }
 
 # # update select_chunking_strategy to always enrich metadata
 # def chunk_documents(documents: List[Document],
