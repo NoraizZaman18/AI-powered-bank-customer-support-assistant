@@ -1,0 +1,37 @@
+{
+  "account_opening_policy.pdf": {
+    "hash": "304440c307df4f0ebc98b4c3e36e101f",
+    "indexed_at": "2026-09-01T21:06:39.551007",
+    "chunk_count": 7
+  },
+  "complaint_handling_policy.pdf": {
+    "hash": "8087737fd60f8d371499d97e9a551039",
+    "indexed_at": "2026-09-01T21:06:39.570861",
+    "chunk_count": 11
+  },
+  "credit_card_policy.pdf": {
+    "hash": "e48d03af31853872d7c4a5f0b1fc3207",
+    "indexed_at": "2026-09-01T21:06:39.585084",
+    "chunk_count": 8
+  },
+  "customer_faq.pdf": {
+    "hash": "cf39072ec6e72e2609c6da11aea05e20",
+    "indexed_at": "2026-09-01T21:06:39.604484",
+    "chunk_count": 18
+  },
+  "loan_policy.pdf": {
+    "hash": "aee9074e45efdb316396915a46415d40",
+    "indexed_at": "2026-09-01T21:06:39.619963",
+    "chunk_count": 8
+  },
+  "schedule_of_charges.pdf": {
+    "hash": "04ab167cff57b9efb9741b7f617bb780",
+    "indexed_at": "2026-09-01T21:06:39.633882",
+    "chunk_count": 13
+  },
+  "spytm_Scanned.pdf": {
+    "hash": "d138422571b98dfe60d1975f364393d5",
+    "indexed_at": "2026-09-01T21:06:41.675696",
+    "chunk_count": 1
+  }
+}

@@ -1,6 +1,7 @@
 
 # main.py
 import os
+from retrieval.store import incremental_index
 from ingestion.chunker import (
     detect_document_types,
     recommend_overlap,
@@ -14,8 +15,7 @@ from ingestion.loader import load_all_documents
 from ingestion.cleaner import clean_documents
 from ingestion.chunker import parent_child_chunking
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+
 from ingestion.chunker import recursive_chunking
 
 from langchain_groq import ChatGroq
@@ -64,100 +64,58 @@ documents = clean_documents(documents)
 print(f"\nTotal documents after cleaning: {len(documents)}")
 
 
+# step 3 ---incremental_chunking() function decides how to chunk each document.
+
+
+
+def incremental_chunking(documents):
+    """
+    Adapter for Topic 19 incremental indexing.
+
+    Uses the existing document-type-specific
+    chunking system from chunker.py.
+    """
+
+    document_types = detect_document_types(documents)
+
+    final_chunks = []
+
+    for source, doc_type in document_types.items():
+
+        settings = recommend_overlap(doc_type)
+
+        source_documents = [
+            doc
+            for doc in documents
+            if doc.metadata.get("source") == source
+        ]
+
+        chunks = recursive_chunking(
+            source_documents,
+            chunk_size=settings["chunk_size"],
+            chunk_overlap=settings["overlap"]
+        )
+
+        chunks = enrich_metadata(chunks)
+
+        final_chunks.extend(chunks)
+
+    return final_chunks
 # ============================================================
-# STEP 3 — CHUNK DOCUMENTS
-# ============================================================
-
-# ============================================================
-
-print("\n" + "=" * 60)
-print("STEP 3 — DOCUMENT TYPE + CHUNKING + METADATA")
-print("=" * 60)
-
-document_types = detect_document_types(documents)
-
-final_chunks = []
-
-for source, doc_type in document_types.items():
-
-    print(f"\nProcessing: {source}")
-    print(f"Document type: {doc_type}")
-
-    settings = recommend_overlap(doc_type)
-
-    source_documents = [
-        doc
-        for doc in documents
-        if doc.metadata.get("source") == source
-    ]
-
-    chunks = recursive_chunking(
-        source_documents,
-        chunk_size=settings["chunk_size"],
-        chunk_overlap=settings["overlap"]
-    )
-
-    # Add enriched metadata
-    chunks = enrich_metadata(chunks)
-
-    final_chunks.extend(chunks)
-
-
-print("\n" + "=" * 60)
-print("FINAL CHUNKING RESULTS")
-print("=" * 60)
-
-print(f"Created {len(final_chunks)} final chunks")
-
-analyse_chunk_quality(final_chunks)
-
-print("\n" + "=" * 60)
-print("SAMPLE CHUNK METADATA")
-print("=" * 60)
-
-for i, chunk in enumerate(final_chunks[:3]):
-
-    print(f"\nChunk {i + 1}")
-    print("-" * 40)
-
-    for key, value in chunk.metadata.items():
-        print(f"{key}: {value}")
-
-# ============================================================
-# STEP 4 — CREATE EMBEDDINGS
+# STEP 4 + 5 — INCREMENTAL INDEXING
 # ============================================================
 
 print("\n" + "=" * 60)
-print("STEP 4 — CREATING EMBEDDINGS")
+print("STEP 4 + 5 — INCREMENTAL INDEXING")
 print("=" * 60)
 
-# Free local embedding model.
-# No API cost.
-
-embeddings = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2"
+vectorstore = incremental_index(
+    folder_path="data/documents/",
+    chunk_function=incremental_chunking,
+    force_reindex=False
 )
 
-print("Embedding model loaded")
-
-
-# ============================================================
-# STEP 5 — STORE VECTORS IN CHROMADB
-# ============================================================
-
-print("\n" + "=" * 60)
-print("STEP 5 — STORING VECTORS")
-print("=" * 60)
-
-vectorstore = Chroma.from_documents(
-    documents=final_chunks,
-    embedding=embeddings,
-    persist_directory="./chroma_db"
-)
-
-print("Stored documents in ChromaDB")
-
-
+print("Vector store ready")
 # ============================================================
 # STEP 6 — CREATE RETRIEVER
 # ============================================================
