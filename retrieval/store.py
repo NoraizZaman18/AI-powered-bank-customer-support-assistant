@@ -165,6 +165,7 @@ def incremental_index(
                 "chunk_count": len(chunks)
             }
         
+        all_chunks = full_deduplication(all_chunks)
         vectorstore = add_documents_to_store(all_chunks)
         save_index_tracker(tracker)
         print(f"\nTotal new chunks added: {len(all_chunks)}")
@@ -177,3 +178,111 @@ def incremental_index(
     print(f"Total chunks in vector store: {total_docs}")
     
     return vectorstore
+
+
+
+def deduplicate_exact(chunks: List[Document]) -> List[Document]:
+    """
+    Remove chunks with identical text content.
+    Fast — uses MD5 hash comparison.
+    Use this always before storing chunks.
+    """
+    
+    seen_hashes = set()
+    unique_chunks = []
+    duplicates_removed = 0
+    
+    for chunk in chunks:
+        content_hash = hashlib.md5(
+            chunk.page_content.strip().encode()
+        ).hexdigest()
+        
+        if content_hash not in seen_hashes:
+            seen_hashes.add(content_hash)
+            unique_chunks.append(chunk)
+        else:
+            duplicates_removed += 1
+    
+    print(f"Exact deduplication: {len(chunks)} → {len(unique_chunks)} chunks")
+    print(f"Removed {duplicates_removed} exact duplicates")
+    return unique_chunks
+
+def deduplicate_near_duplicates(chunks: List[Document],
+                                similarity_threshold: float = 0.95) -> List[Document]:
+    """
+    Remove chunks that are very similar even if not identical.
+    Slower — computes embeddings and compares similarity.
+    Use when documents have paraphrased repeated content.
+    
+    similarity_threshold: 
+    - 0.99 = only remove near-identical text
+    - 0.95 = remove very similar content (recommended)
+    - 0.90 = more aggressive — removes somewhat similar content
+    """
+    
+    import numpy as np
+    
+    if len(chunks) < 2:
+        return chunks
+    
+    print(f"Near-duplicate detection on {len(chunks)} chunks...")
+    print("Computing embeddings for deduplication...")
+    
+    embeddings_model = get_embeddings()
+    texts = [c.page_content for c in chunks]
+    
+    # embed all chunks
+    embeddings = embeddings_model.embed_documents(texts)
+    embeddings = np.array(embeddings)
+    
+    # normalize for cosine similarity
+    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+    embeddings_normalized = embeddings / norms
+    
+    # find near duplicates
+    keep = [True] * len(chunks)
+    
+    for i in range(len(chunks)):
+        if not keep[i]:
+            continue
+        
+        for j in range(i + 1, len(chunks)):
+            if not keep[j]:
+                continue
+            
+            similarity = float(
+                np.dot(embeddings_normalized[i], embeddings_normalized[j])
+            )
+            
+            if similarity >= similarity_threshold:
+                # keep the chunk with more content
+                if len(chunks[i].page_content) >= len(chunks[j].page_content):
+                    keep[j] = False
+                else:
+                    keep[i] = False
+                    break
+    
+    unique_chunks = [c for c, k in zip(chunks, keep) if k]
+    removed = len(chunks) - len(unique_chunks)
+    
+    print(f"Near-duplicate deduplication: {len(chunks)} → {len(unique_chunks)} chunks")
+    print(f"Removed {removed} near-duplicate chunks (threshold={similarity_threshold})")
+    return unique_chunks
+
+
+def full_deduplication(chunks: List[Document],
+                       near_duplicate_threshold: float = 0.95) -> List[Document]:
+    """
+    Run both exact and near-duplicate deduplication.
+    This is what you call in your production pipeline.
+    """
+    
+    # step 1 — remove exact duplicates first (fast)
+    chunks = deduplicate_exact(chunks)
+    
+    # step 2 — remove near duplicates (slower but more thorough)
+    # only run if you have many chunks — computationally expensive
+    if len(chunks) > 10:
+        chunks = deduplicate_near_duplicates(chunks, near_duplicate_threshold)
+    
+    return chunks
