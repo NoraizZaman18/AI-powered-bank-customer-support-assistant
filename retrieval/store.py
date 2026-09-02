@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from retrieval.embedder import get_local_embeddings
 from langchain_core.documents import Document
 from typing import List
 
@@ -12,25 +12,14 @@ INDEX_TRACKER_PATH = "data/index_tracker.json"
 CHROMA_DB_PATH = "./chroma_db"
 
 COLLECTION_NAME = "bank_documents"
-def get_embeddings():
-    """
-    Returns embedding model.
-    Using local HuggingFace model — completely free.
-    """
-    return HuggingFaceEmbeddings(
-        model_name="all-MiniLM-L6-v2",
-        model_kwargs={"device": "cpu"}
-    )
+
 def get_vectorstore():
-    """
-    Returns ChromaDB vector store.
-    Creates it if it does not exist.
-    """
     return Chroma(
         persist_directory=CHROMA_DB_PATH,
-        embedding_function=get_embeddings(),
+        embedding_function=get_local_embeddings(),
         collection_name="bank_documents"
     )
+
 def get_file_hash(file_path: str) -> str:
     """
     Generate MD5 hash of a file.
@@ -228,7 +217,7 @@ def deduplicate_near_duplicates(chunks: List[Document],
     print(f"Near-duplicate detection on {len(chunks)} chunks...")
     print("Computing embeddings for deduplication...")
     
-    embeddings_model = get_embeddings()
+    embeddings_model = get_local_embeddings()
     texts = [c.page_content for c in chunks]
     
     # embed all chunks
