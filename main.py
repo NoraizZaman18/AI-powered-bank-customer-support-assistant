@@ -1,7 +1,8 @@
 
 # main.py
 import os
-from retrieval.retriever import smart_retrieve
+
+from retrieval.retriever import smart_retrieve, get_hybrid_retriever
 from retrieval.store import incremental_index
 from ingestion.chunker import (
     detect_document_types,
@@ -15,9 +16,6 @@ from dotenv import load_dotenv
 from ingestion.loader import load_all_documents
 from ingestion.cleaner import clean_documents
 from ingestion.chunker import parent_child_chunking
-
-
-from ingestion.chunker import recursive_chunking
 
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
@@ -117,11 +115,15 @@ vectorstore = incremental_index(
 )
 
 print("Vector store ready")
-# ============================================================
-# STEP 6 — CREATE RETRIEVER
-# ============================================================
 
 
+# ============================================================
+# PREPARE CHUNKS FOR BM25
+# ============================================================
+
+all_chunks = incremental_chunking(documents)
+
+print(f"Chunks prepared for BM25: {len(all_chunks)}")
 
 # ============================================================
 # STEP 7 — CREATE RAG PROMPT
@@ -201,6 +203,7 @@ def retrieve_for_rag(question):
     return smart_retrieve(
         question,
         vectorstore,
+        all_chunks,
         k=3
     )
 
@@ -247,6 +250,7 @@ def debug_rag_pipeline(question):
     retrieved_docs = smart_retrieve(
     question,
     vectorstore,
+    all_chunks,
     k=3
 )
 
@@ -331,7 +335,6 @@ Question:
         "answer": answer
     }
 
-
 #  parent child chunking 
 
 print("\n" + "="*50)
@@ -363,9 +366,23 @@ for i, child in enumerate(first_children[:3]):
 # TEST
 # ============================================================
 
+# if __name__ == "__main__":
+
+#     result = debug_rag_pipeline(
+#         "What is the minimum balance for savings account?"
+#     )
+
 if __name__ == "__main__":
 
-    result = debug_rag_pipeline(
-        "What is the minimum balance for savings account?"
-    )
+    test_questions = [
+        "What is the minimum balance required for a savings account?",
+        "Which documents do I need to open a bank account?",
+        "How much is the IBFT transfer charge?",
+        "What is the procedure for filing a complaint against the bank?",
+        "How much does a RAAST transfer cost?"
+    ]
+
+    for question in test_questions:
+        debug_rag_pipeline(question)
+
 

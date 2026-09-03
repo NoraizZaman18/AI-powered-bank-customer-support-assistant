@@ -2,6 +2,9 @@ import os
 from typing import List, Optional, Dict
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
+from langchain_community.retrievers import BM25Retriever
+from langchain_classic.retrievers import EnsembleRetriever
+
 
 def get_basic_retriever(
     vectorstore: VectorStore,
@@ -112,52 +115,131 @@ def detect_relevant_document(question: str) -> Optional[dict]:
 def smart_retrieve(
     question: str,
     vectorstore: VectorStore,
+    all_chunks: List[Document],
     k: int = 3,
-    use_smart_filter: bool = True
+    use_smart_filter: bool = True,
+    vector_weight: float = 0.7,
+    keyword_weight: float = 0.3
 ) -> List[Document]:
     """
-    Retrieve with automatic document detection.
-    If a specific document is detected use filtered retrieval.
-    Otherwise search all documents.
+    Smart hybrid retrieval.
+
+    1. Detect relevant document using Topic 25 routing.
+    2. Apply metadata filtering.
+    3. Run vector similarity search + BM25 keyword search.
+    4. Combine both using EnsembleRetriever.
+    5. Return the top k chunks.
     """
-    
+
+    # ========================================================
+    # STEP 1 — DOCUMENT ROUTING
+    # ========================================================
+
     if use_smart_filter:
         filter_dict = detect_relevant_document(question)
     else:
         filter_dict = None
-    
+
+    # ========================================================
+    # STEP 2 — CREATE HYBRID RETRIEVER
+    # ========================================================
+
+    hybrid_retriever = get_hybrid_retriever(
+        vectorstore=vectorstore,
+        all_chunks=all_chunks,
+        filter_dict=filter_dict,
+        vector_weight=vector_weight,
+        keyword_weight=keyword_weight,
+        k=k
+    )
+
+    # ========================================================
+    # STEP 3 — SEARCH
+    # ========================================================
+
     if filter_dict:
-        retriever = get_filtered_retriever(vectorstore, filter_dict, k)
-        print(f"Using filtered retrieval: {filter_dict}")
+        print(f"Using filtered hybrid retrieval: {filter_dict}")
     else:
-        retriever = get_basic_retriever(vectorstore, k)
-        print("Using unfiltered retrieval: searching all documents")
-    
-    docs = retriever.invoke(question)
-    print(f"Retrieved {len(docs)} chunks")
+        print("Using unfiltered hybrid retrieval: searching all documents")
+
+    docs = hybrid_retriever.invoke(question)
+
+    # Ensemble retrieves more candidates internally.
+    # Return only the requested final k results.
+    docs = docs[:k]
+
+    print(f"Retrieved {len(docs)} chunks using hybrid search")
+
     return docs
+def get_hybrid_retriever(
+    vectorstore: VectorStore,
+    all_chunks: List[Document],
+    filter_dict: Optional[dict] = None,
+    vector_weight: float = 0.7,
+    keyword_weight: float = 0.3,
+    k: int = 3
+):
+    """
+    Hybrid retriever combining:
+    - Vector similarity search
+    - BM25 keyword search
 
+    If filter_dict is provided, both retrievers
+    search only the filtered documents.
+    """
 
+    # ========================================================
+    # VECTOR SEARCH
+    # ========================================================
 
-if __name__ == "__main__":
-    from retrieval.store import get_vectorstore
-    
-    vectorstore = get_vectorstore()
-    
-    test_questions = [
-        "What is the interest rate for personal loan?",
-        "How do I file a complaint with the bank?",
-        "What is the annual fee for credit card?",
-        "What documents do I need to open an account?"
-    ]
-    
-    print("METADATA FILTERING TEST")
-    print("="*50)
-    
-    for question in test_questions:
-        print(f"\nQuestion: {question}")
-        docs = smart_retrieve(question, vectorstore)
-        for i, doc in enumerate(docs):
-            print(f"  Result {i+1}: {doc.metadata.get('source')} "
-                  f"page {doc.metadata.get('page')} — "
-                  f"{doc.page_content[:80]}...")
+    search_kwargs = {
+        "k": k * 2
+    }
+
+    if filter_dict:
+        search_kwargs["filter"] = filter_dict
+
+    vector_retriever = vectorstore.as_retriever(
+        search_type="similarity",
+        search_kwargs=search_kwargs
+    )
+
+    # ========================================================
+    # BM25 KEYWORD SEARCH
+    # ========================================================
+
+    keyword_chunks = all_chunks
+
+    if filter_dict:
+        keyword_chunks = [
+            chunk
+            for chunk in all_chunks
+            if all(
+                chunk.metadata.get(key) == value
+                for key, value in filter_dict.items()
+            )
+        ]
+
+    keyword_retriever = BM25Retriever.from_documents(
+        keyword_chunks
+    )
+
+    keyword_retriever.k = k * 2
+
+    # ========================================================
+    # ENSEMBLE / HYBRID SEARCH
+    # ========================================================
+
+    hybrid_retriever = EnsembleRetriever(
+        retrievers=[
+            vector_retriever,
+            keyword_retriever
+        ],
+        weights=[
+            vector_weight,
+            keyword_weight
+        ]
+    )
+
+    return hybrid_retriever
+
