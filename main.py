@@ -1,6 +1,7 @@
 
 # main.py
 import os
+from retrieval.retriever import smart_retrieve
 from retrieval.store import incremental_index
 from ingestion.chunker import (
     detect_document_types,
@@ -21,7 +22,7 @@ from ingestion.chunker import recursive_chunking
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 
 # ============================================================
@@ -120,17 +121,6 @@ print("Vector store ready")
 # STEP 6 — CREATE RETRIEVER
 # ============================================================
 
-print("\n" + "=" * 60)
-print("STEP 6 — CREATING RETRIEVER")
-print("=" * 60)
-
-retriever = vectorstore.as_retriever(
-    search_kwargs={
-        "k": 3
-    }
-)
-
-print("Retriever created")
 
 
 # ============================================================
@@ -207,27 +197,27 @@ def format_docs(docs):
         for doc in docs
     )
 
+def retrieve_for_rag(question):
+    return smart_retrieve(
+        question,
+        vectorstore,
+        k=3
+    )
 
+retrieve_runnable = RunnableLambda(retrieve_for_rag)
 # ============================================================
 # STEP 10 — BUILD RAG CHAIN
 # ============================================================
 
-print("\n" + "=" * 60)
-print("STEP 10 — BUILDING RAG CHAIN")
-print("=" * 60)
-
 rag_chain = (
     {
-        "context": retriever | format_docs,
+        "context": retrieve_runnable | format_docs,
         "question": RunnablePassthrough()
     }
     | prompt
     | llm
     | StrOutputParser()
 )
-
-print("RAG chain created")
-
 
 # ============================================================
 # DEBUG RAG PIPELINE
@@ -254,7 +244,11 @@ def debug_rag_pipeline(question):
 
     print("\n--- STEP 1: RETRIEVAL ---")
 
-    retrieved_docs = retriever.invoke(question)
+    retrieved_docs = smart_retrieve(
+    question,
+    vectorstore,
+    k=3
+)
 
     print(
         f"Retrieved {len(retrieved_docs)} chunks"

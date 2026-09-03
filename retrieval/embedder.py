@@ -17,4 +17,3 @@ def get_local_embeddings():
         model_kwargs={"device": "cpu"},
         encode_kwargs={"normalize_embeddings": True}
     )
-
