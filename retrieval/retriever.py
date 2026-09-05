@@ -1101,7 +1101,7 @@ def smart_retrieve(
     print(f"\nFinal context: {len(context)} chars from {len(docs)} chunks")
     print(f"Sources: {[s['source'] for s in sources]}")
 
-    return context, sources
+    return context, sources, docs
 
 
 # ── TEST BLOCK ────────────────────────────────────────────────────────────────
