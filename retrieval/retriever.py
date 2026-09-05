@@ -1098,9 +1098,7 @@ def smart_retrieve(
 
     context = "\n\n---\n\n".join(context_parts)
 
-    print(f"\nFinal context: {len(context)} chars from {len(docs)} chunks")
-    print(f"Sources: {[s['source'] for s in sources]}")
-
+    # CHANGED — now returns three values
     return context, sources, docs
 
 
