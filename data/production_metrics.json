@@ -28,5 +28,65 @@
     "fallback_used": false,
     "empty_retrieval": false,
     "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:33:53.745446",
+    "question_preview": "Hello, how can you help me?",
+    "strategy": "direct_no_retrieval",
+    "num_chunks": 0,
+    "latency_seconds": 15.9,
+    "fallback_used": false,
+    "empty_retrieval": true,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:34:14.663024",
+    "question_preview": "Which documents do I need to open a bank account?",
+    "strategy": "standard_rag",
+    "num_chunks": 6,
+    "latency_seconds": 20.906,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:34:22.440142",
+    "question_preview": "How much is the IBFT transfer charge?",
+    "strategy": "standard_rag",
+    "num_chunks": 6,
+    "latency_seconds": 7.768,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:34:31.657322",
+    "question_preview": "What is the procedure for filing a complaint?",
+    "strategy": "standard_rag",
+    "num_chunks": 6,
+    "latency_seconds": 9.209,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:35:31.491376",
+    "question_preview": "What happens if I miss a loan payment and then want to prepa",
+    "strategy": "corrective_rag",
+    "num_chunks": 6,
+    "latency_seconds": 59.823,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:35:40.682935",
+    "question_preview": "If I take a loan of 500000 at 20 percent for 3 years what is",
+    "strategy": "direct_no_retrieval",
+    "num_chunks": 0,
+    "latency_seconds": 9.181,
+    "fallback_used": false,
+    "empty_retrieval": true,
+    "error": null
   }
 ]

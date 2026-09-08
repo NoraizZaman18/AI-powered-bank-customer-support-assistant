@@ -40,5 +40,89 @@
       "latency": 13.746,
       "complexity": "simple"
     }
+  },
+  "c3b19f129bf0169e13ea3e2ee9267ad0": {
+    "question": "Hello, how can you help me?",
+    "cached_at": "2026-09-08T22:33:53.743217",
+    "result": {
+      "question": "Hello, how can you help me?",
+      "answer": "Hello! I\u2019m here to help with any questions or issues you have regarding ABC Bank\u2014whether it\u2019s about accounts, loans, online banking, or anything else. How can I assist you today?",
+      "strategy": "direct_no_retrieval",
+      "num_chunks": 0,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 15.9,
+      "complexity": "simple"
+    }
+  },
+  "509c11d9892e70917ebcb45b78b03194": {
+    "question": "Which documents do I need to open a bank account?",
+    "cached_at": "2026-09-08T22:34:14.660327",
+    "result": {
+      "question": "Which documents do I need to open a bank account?",
+      "answer": "To open an account with ABC\u202fBank you\u2019ll need to submit the following documents, depending on the type of account you wish to open:\n\n| Account type | Required documents (as per policy) |\n|--------------|------------------------------------|\n| **Individual (Pakistani national)** | \u2022 Original CNIC (mandatory) <br>\u2022 Utility bill not older than 3\u202fmonths (proof of address) <br>\u2022 Passport\u2011size photograph (2 copies) <br>\u2022 Source of income declaration form (mandatory) <br>\u2022 Next of kin details (mandatory) |\n| **Minor account** | \u2022 Minor\u2019s original B\u2011Form <br>\u2022 Parent or guardian\u2019s original CNIC <br>\u2022 Proof of relationship (birth certificate) <br>\u2022 Guardian\u2019s utility bill |\n| **Business account** | \u2022 Business owner\u2019s CNIC <br>\u2022 Business registration certificate <br>\u2022 NTN certificate <br>\u2022 Board resolution for authorized signatories <br>\u2022 Partnership deed (if applicable) <br>\u2022 Memorandum and articles of association (for companies) |\n\nIf you need documents for a specific account type not listed above, let me know and I can provide the exact requirements.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] account_opening_policy.pdf  |  Page 1  |  documents\n  [2] account_opening_policy.pdf  |  Page 2  |  documents",
+      "strategy": "standard_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 20.906,
+      "complexity": "simple"
+    }
+  },
+  "ac5f7db0f0c9fb7d4b72b0f9399bd2ba": {
+    "question": "How much is the IBFT transfer charge?",
+    "cached_at": "2026-09-08T22:34:22.437008",
+    "result": {
+      "question": "How much is the IBFT transfer charge?",
+      "answer": "IBFT transfer charges are tiered as follows:\n\n| IBFT amount | Charge per transaction |\n|-------------|------------------------|\n| Up to\u202fRs.\u202f25,000 | Rs.\u202f200 |\n| Rs.\u202f25,001\u202f\u2013\u202fRs.\u202f500,000 | Rs.\u202f300 |\n| Above\u202fRs.\u202f500,000 | Rs.\u202f500 |\n\nThese rates are applicable for all IBFT transactions.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] schedule_of_charges.pdf  |  Page 1  |  charges\n  [2] schedule_of_charges.pdf  |  Page 2  |  charges",
+      "strategy": "standard_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 7.768,
+      "complexity": "simple"
+    }
+  },
+  "0aec07c824934f6cd488d8966d35eb21": {
+    "question": "What is the procedure for filing a complaint?",
+    "cached_at": "2026-09-08T22:34:31.654140",
+    "result": {
+      "question": "What is the procedure for filing a complaint?",
+      "answer": "**Procedure for filing a complaint with ABC\u202fBank**\n\n| Step | What to do | Details |\n|------|------------|---------|\n| **1. Choose a channel** | \u2022 **Phone** \u2013 Call 0800\u2011ABCBANK (24\u202fh/7\u202fd) <br>\u2022 **Branch** \u2013 Visit any ABC\u202fBank branch and speak to a Customer Service Officer <br>\u2022 **Email** \u2013 Send an email to complaints@abcbank.com (response within 24\u202fh) <br>\u2022 **Mobile App** \u2013 Open the ABC\u202fBank app \u2192 Help \u2192 File Complaint <br>\u2022 **Website** \u2013 Go to abcbank.com/complaints and fill the online form <br>\u2022 **Written** \u2013 Mail a letter to ABC\u202fBank Head Office, Complaints Department, Karachi |\n| **2. Provide required information** | \u2022 Full name as per CNIC <br>\u2022 CNIC number <br>\u2022 Account number or card number <br>\u2022 Contact number and email address <br>\u2022 Clear description of the complaint <br>\u2022 Date and location of incident <br>\u2022 Any reference numbers related to the issue <br>\u2022 Supporting documents (if available) |\n| **3. Receive acknowledgement** | \u2022 A complaint reference number is issued immediately upon registration. <br>\u2022 SMS confirmation is sent within 1\u202fhour. <br>\u2022 Email confirmation is sent within 2\u202fhours. <br>\u2022 Use this reference number for all follow\u2011up inquiries. |\n\nFollow these steps to file your complaint and keep the reference number handy for tracking and escalation.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] complaint_handling_policy.pdf  |  Page 1  |  documents\n  [2] complaint_handling_policy.pdf  |  Page 3  |  contact\n  [3] complaint_handling_policy.pdf  |  Page 2  |  charges",
+      "strategy": "standard_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 9.209,
+      "complexity": "simple"
+    }
+  },
+  "7b75922d1c41ecbe24db7aba7efa2423": {
+    "question": "What happens if I miss a loan payment and then want to prepay?",
+    "cached_at": "2026-09-08T22:35:31.487222",
+    "result": {
+      "question": "What happens if I miss a loan payment and then want to prepay?",
+      "answer": "If you miss a loan payment, the loan is considered delinquent after 30\u202fdays of the missed payment.  \nYou will need to clear the missed installment (and any applicable penalties) before you can proceed with a prepayment.  \n\nPre\u2011payment is allowed after 6\u202fmonths from disbursement.  \n- **Partial prepayment**: minimum Rs.\u202f10,000, allowed after 6\u202fmonths.  \n- **Full prepayment**: allowed anytime, but a 2\u202f% penalty on the outstanding principal applies unless the loan tenure is more than 80\u202f% completed.  \n\nSo, after a missed payment you should first settle the overdue amount, then you can prepay the remaining balance subject to the above penalty rules.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] loan_policy.pdf  |  Page 1  |  charges\n  [2] loan_policy.pdf  |  Page 2  |  eligibility\n  [3] loan_policy.pdf  |  Page 3  |  charges",
+      "strategy": "corrective_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 59.823,
+      "complexity": "medium"
+    }
+  },
+  "f4efaa4554761263bc1ad977a3b57394": {
+    "question": "If I take a loan of 500000 at 20 percent for 3 years what is monthly payment?",
+    "cached_at": "2026-09-08T22:35:40.679284",
+    "result": {
+      "question": "If I take a loan of 500000 at 20 percent for 3 years what is monthly payment?",
+      "answer": "For a loan of\u202f$500,000\u202fat an annual rate of\u202f20\u202f% (compounded monthly) over\u202f3\u202fyears (36 payments), the monthly payment is:\n\n\\[\n\\text{Monthly payment} = \\frac{r \\times PV}{1-(1+r)^{-n}}\n\\]\n\nwhere  \n\\(r = \\frac{0.20}{12} = 0.0166667\\) (monthly rate)  \n\\(PV = 500{,}000\\)  \n\\(n = 36\\)\n\n\\[\n\\text{Monthly payment} \\approx \\frac{0.0166667 \\times 500{,}000}{1-(1.0166667)^{-36}}\n\\approx \\frac{8{,}333.33}{0.449}\n\\approx \\$18{,}560\n\\]\n\nSo you would pay roughly **$18,560 per month**.",
+      "strategy": "direct_no_retrieval",
+      "num_chunks": 0,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 9.181,
+      "complexity": "simple"
+    }
   }
 }
