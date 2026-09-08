@@ -1,0 +1,44 @@
+{
+  "905a151a7b6d8c54e783cc277cf0161b": {
+    "question": "What is the minimum balance for a savings account?",
+    "cached_at": "2026-09-08T22:02:07.552329",
+    "result": {
+      "question": "What is the minimum balance for a savings account?",
+      "answer": "The minimum balance required for a Regular Savings Account is **Rs.\u202f10,000**.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] account_opening_policy.pdf  |  Page 1  |  charges\n  [2] account_opening_policy.pdf  |  Page 2  |  charges",
+      "strategy": "standard_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": true,
+      "latency": 0.001,
+      "complexity": "simple"
+    }
+  },
+  "fa1c2f0acccf36ff24ebbe35e9ad5085": {
+    "question": "How do I file a complaint?",
+    "cached_at": "2026-09-08T22:02:19.021968",
+    "result": {
+      "question": "How do I file a complaint?",
+      "answer": "To file a complaint with ABC\u202fBank you can:\n\n- Call the helpline at **0800\u2011ABCBANK**  \n- Visit any ABC\u202fBank branch in person  \n- Email **complaints@abcbank.com**  \n- Use the complaint section in the ABC\u202fBank mobile app  \n\nYou will receive a complaint reference number immediately.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcc4  Sources\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  [1] customer_faq.pdf  |  Page 2  |  contact\n  [2] customer_faq.pdf  |  Page 3  |  process",
+      "strategy": "standard_rag",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 11.464,
+      "complexity": "simple"
+    }
+  },
+  "f9b607268d710bdf4b6c409cd666cb4b": {
+    "question": "What are the loan requirements and credit card fees combined?",
+    "cached_at": "2026-09-08T22:02:32.779975",
+    "result": {
+      "question": "What are the loan requirements and credit card fees combined?",
+      "answer": "**Loan Requirements (Personal & Business)**  \n\n| Category | Requirement | Details |\n|----------|-------------|---------|\n| **Personal Loans** | Minimum age | 21\u202fyears |\n| | Maximum age at loan maturity | 60\u202fyears (salaried) / 65\u202fyears (self\u2011employed) |\n| | Minimum monthly income | Rs.\u202f30,000 (salaried) / Rs.\u202f50,000 (self\u2011employed) |\n| | Minimum employment tenure | 1\u202fyear with current employer |\n| | Credit score | 600\u202fand above |\n| | Minimum loan amount | Rs.\u202f50,000 |\n| | Maximum loan amount (salaried) | Rs.\u202f3,000,000 |\n| | Tenure options | 12, 18, 24, 36, 48, 60\u202fmonths (max 60\u202fmonths) |\n| | Required documents (salaried) | Original CNIC copy, latest 3\u202fmonths salary slips, 6\u202fmonths bank statement, employment letter, utility bill (\u2264\u202f3\u202fmonths), passport\u2011size photograph |\n| **Business Loans** | Minimum annual turnover | Rs.\u202f2,000,000 |\n| | Business owner age | 25\u202f\u2013\u202f65\u202fyears |\n| | Minimum loan amount | Rs.\u202f500,000 |\n| | Maximum loan amount | Rs.\u202f50,000,000 |\n| | Interest rates | 22\u202f% p.a. (\u2264\u202f5,000,000), 20\u202f% p.a. (\u2264\u202f20,000,000), 18\u202f% p.a. (>\u202f20,000,000) |\n| | Required documents | Business registration certificate, NTN and tax returns for last 2\u202fyears |\n\n---\n\n**Credit Card Fees**\n\n| Card Type | Annual Fee | Supplementary Card Fee | Other Fees |\n|-----------|------------|------------------------|------------|\n| Classic | Rs.\u202f2,500 | 50\u202f% of primary fee (Rs.\u202f1,250) | Late payment fee: Rs.\u202f1,500 or 5\u202f% of minimum due (whichever is higher) |\n| Gold | Rs.\u202f5,000 | 50\u202f% of primary fee (Rs.\u202f2,500) | Same late payment fee |\n| Platinum | Rs.\u202f10,000 | 50\u202f% of primary fee (Rs.\u202f5,000) | Same late payment fee |\n| World | Rs.\u202f25,000 | 50\u202f% of primary fee (Rs.\u202f12,500) | Same late payment fee |\n| **Other Charges (all cards)** | | | Cash advance fee: 3\u202f% of amount (min\u202fRs.\u202f500); Over\u2011limit fee: Rs.\u202f1,000 per month; Card replacement fee: Rs.\u202f500; Cheque return fee: Rs.\u202f1,000 |\n| **Finance Charges** | | | Markup on outstanding balance: 3.5\u202f% per month; Markup on cash advance: 4\u202f% per month (if full payment not made by due date) |\n\n*Annual fee may be waived if the cardholder spends above the specified threshold each year (not detailed in the provided excerpts).*\n\n---\n\n**Summary**\n\n- **Loan requirements** cover age, income, credit score, turnover, loan amount limits, interest rates, and required documentation for both personal and business loans.  \n- **Credit card fees** include annual fees (varying by card tier), supplementary card fees, finance charges, and other miscellaneous fees such as cash advance, over\u2011limit, replacement, and cheque return fees.",
+      "strategy": "multi_hop",
+      "num_chunks": 6,
+      "fallback_used": false,
+      "cached": false,
+      "latency": 13.746,
+      "complexity": "simple"
+    }
+  }
+}

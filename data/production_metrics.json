@@ -1,0 +1,32 @@
+[
+  {
+    "timestamp": "2026-09-08T22:02:07.554067",
+    "question_preview": "What is the minimum balance for a savings account?",
+    "strategy": "standard_rag",
+    "num_chunks": 6,
+    "latency_seconds": 27.702,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:02:19.024360",
+    "question_preview": "How do I file a complaint?",
+    "strategy": "standard_rag",
+    "num_chunks": 6,
+    "latency_seconds": 11.464,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  },
+  {
+    "timestamp": "2026-09-08T22:02:32.780962",
+    "question_preview": "What are the loan requirements and credit card fees combined",
+    "strategy": "multi_hop",
+    "num_chunks": 6,
+    "latency_seconds": 13.746,
+    "fallback_used": false,
+    "empty_retrieval": false,
+    "error": null
+  }
+]
