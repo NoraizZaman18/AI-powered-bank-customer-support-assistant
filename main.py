@@ -169,6 +169,7 @@
 
 import os
 from dotenv import load_dotenv
+from agent import set_agent_dependencies, run_agent
 
 from ingestion.loader import load_all_documents
 from ingestion.cleaner import clean_documents
@@ -257,14 +258,23 @@ all_chunks = incremental_chunking(documents)
 print(f"  Chunks for BM25: {len(all_chunks)}")
 
 
+# ── STEP 6 — INITIALIZE AGENT ────────────────────────────────────────────────
+
+print("\n" + "═"*60)
+print("  STEP 6 — INITIALIZING AGENT")
+print("═"*60)
+
+set_agent_dependencies(vectorstore, all_chunks)
+print("  Agent ready")
+
+
 # ── RAG PIPELINE ─────────────────────────────────────────────────────────────
+
 
 def run_rag_pipeline(question: str, verbose: bool = False) -> dict:
     """
-    Full RAG pipeline:
-    Step 1 — Retrieve relevant chunks
-    Step 2 — Generate answer with citations
-    Step 3 — Display clean formatted response
+    Full agentic RAG pipeline.
+    Agent decides the best strategy for each question.
     """
 
     if verbose:
@@ -273,28 +283,53 @@ def run_rag_pipeline(question: str, verbose: bool = False) -> dict:
         print(f"{'═'*60}")
         print(f"  {question}")
 
-    # ── RETRIEVAL ─────────────────────────────────────────────────
-    if verbose:
-        print(f"\n{'─'*60}")
-        print(f"  RETRIEVAL")
-        print(f"{'─'*60}")
+    result = run_agent(question)
 
-    context, sources, retrieved_docs = smart_retrieve(
-        question=question,
-        vectorstore=vectorstore,
-        all_chunks=all_chunks,
-        k=6,
-        strategy="ensemble",
-        apply_reorder=True,
-        use_smart_filter=True,
-        use_reranking=True
-    )
+    print(f"\n{'═'*60}")
+    print(f"  Q: {question}")
+    print(f"  Strategy: {result['strategy']}")
+    print(f"{'═'*60}")
+    print(f"\n{result['answer']}")
+    print()
 
-    if verbose:
-        print(f"\n  Retrieved {len(sources)} chunks:")
-        for i, s in enumerate(sources, start=1):
-            print(f"    [{i}] {s['source']}  |  Page {s['page']}")
-            print(f"        {s['content_preview'][:80]}...")
+    return result
+
+# def run_rag_pipeline(question: str, verbose: bool = False) -> dict:
+#     """
+#     Full RAG pipeline:
+#     Step 1 — Retrieve relevant chunks
+#     Step 2 — Generate answer with citations
+#     Step 3 — Display clean formatted response
+#     """
+
+#     if verbose:
+#         print(f"\n{'═'*60}")
+#         print(f"  QUESTION")
+#         print(f"{'═'*60}")
+#         print(f"  {question}")
+
+#     # ── RETRIEVAL ─────────────────────────────────────────────────
+#     if verbose:
+#         print(f"\n{'─'*60}")
+#         print(f"  RETRIEVAL")
+#         print(f"{'─'*60}")
+
+#     context, sources, retrieved_docs = smart_retrieve(
+#         question=question,
+#         vectorstore=vectorstore,
+#         all_chunks=all_chunks,
+#         k=6,
+#         strategy="ensemble",
+#         apply_reorder=True,
+#         use_smart_filter=True,
+#         use_reranking=True
+#     )
+
+#     if verbose:
+#         print(f"\n  Retrieved {len(sources)} chunks:")
+#         for i, s in enumerate(sources, start=1):
+#             print(f"    [{i}] {s['source']}  |  Page {s['page']}")
+#             print(f"        {s['content_preview'][:80]}...")
 
     # ── GENERATION ────────────────────────────────────────────────
     if verbose:
@@ -333,12 +368,14 @@ def run_rag_pipeline(question: str, verbose: bool = False) -> dict:
 if __name__ == "__main__":
 
     test_questions = [
-        "What is the minimum balance required for a savings account?",
-        "Which documents do I need to open a bank account?",
-        "How much is the IBFT transfer charge?",
-        "What is the procedure for filing a complaint against the bank?",
-        "How much does a RAAST transfer cost?",
-        "What is the current SBP policy rate?",
+        # "What is the minimum balance required for a savings account?",
+        # "Which documents do I need to open a bank account?",
+        # "How much is the IBFT transfer charge?",
+        # "What is the procedure for filing a complaint against the bank?",
+        # "How much does a RAAST transfer cost?",
+        # "What is the current SBP policy rate?",
+
+        "I want to take a loan. Am I eligible, what documents do I need, and what will my monthly payment be?"
     ]
 
     for question in test_questions:

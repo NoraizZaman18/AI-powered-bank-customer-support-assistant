@@ -1,0 +1,186 @@
+{
+  "version": "1.0",
+  "description": "Golden test set for ABC Bank RAG system",
+  "questions": [
+    {
+      "id": "Q001",
+      "question": "What is the minimum balance for a Regular Savings Account?",
+      "ground_truth": "The minimum balance for a Regular Savings Account is Rs. 10,000.",
+      "expected_source": "account_opening_policy.pdf"
+    },
+    {
+      "id": "Q002",
+      "question": "What is the minimum balance for a Premium Savings Account?",
+      "ground_truth": "The minimum balance for a Premium Savings Account is Rs. 100,000.",
+      "expected_source": "account_opening_policy.pdf"
+    },
+    {
+      "id": "Q003",
+      "question": "What documents are required to open a savings account for a Pakistani national?",
+      "ground_truth": "Required documents are original CNIC, utility bill not older than 3 months, and 2 passport size photographs.",
+      "expected_source": "account_opening_policy.pdf"
+    },
+    {
+      "id": "Q004",
+      "question": "What is the profit rate for a Regular Savings Account?",
+      "ground_truth": "The profit rate for a Regular Savings Account is 5% per annum.",
+      "expected_source": "account_opening_policy.pdf"
+    },
+    {
+      "id": "Q005",
+      "question": "What is the minimum loan amount for a personal loan?",
+      "ground_truth": "The minimum personal loan amount is Rs. 50,000.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q006",
+      "question": "What is the maximum personal loan amount for salaried employees?",
+      "ground_truth": "The maximum personal loan amount for salaried employees is Rs. 3,000,000.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q007",
+      "question": "What is the interest rate for salaried government employees?",
+      "ground_truth": "The interest rate for salaried government employees is 18% per annum.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q008",
+      "question": "What is the loan processing fee?",
+      "ground_truth": "The loan processing fee is 1% of the loan amount with a minimum of Rs. 2,500.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q009",
+      "question": "What is the early repayment penalty for a personal loan?",
+      "ground_truth": "The early repayment penalty is 2% of the outstanding principal amount.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q010",
+      "question": "What is the annual fee for a Classic credit card?",
+      "ground_truth": "The annual fee for a Classic credit card is Rs. 2,500.",
+      "expected_source": "credit_card_policy.pdf"
+    },
+    {
+      "id": "Q011",
+      "question": "What is the markup rate on outstanding credit card balance?",
+      "ground_truth": "The markup rate on outstanding balance is 3.5% per month.",
+      "expected_source": "credit_card_policy.pdf"
+    },
+    {
+      "id": "Q012",
+      "question": "What is the late payment fee for credit card?",
+      "ground_truth": "The late payment fee is Rs. 1,500 or 5% of the minimum due, whichever is higher.",
+      "expected_source": "credit_card_policy.pdf"
+    },
+    {
+      "id": "Q013",
+      "question": "What is the minimum credit card payment due each month?",
+      "ground_truth": "The minimum payment due is 5% of the outstanding balance or Rs. 1,000, whichever is higher.",
+      "expected_source": "credit_card_policy.pdf"
+    },
+    {
+      "id": "Q014",
+      "question": "What is the IBFT transfer charge for amounts up to Rs. 25,000?",
+      "ground_truth": "The IBFT charge for transfers up to Rs. 25,000 is Rs. 200 per transaction.",
+      "expected_source": "schedule_of_charges.pdf"
+    },
+    {
+      "id": "Q015",
+      "question": "Is RAAST transfer free?",
+      "ground_truth": "Yes, RAAST transfers are free and unlimited.",
+      "expected_source": "schedule_of_charges.pdf"
+    },
+    {
+      "id": "Q016",
+      "question": "What is the ATM cash withdrawal limit per day?",
+      "ground_truth": "The ATM cash withdrawal limit is Rs. 50,000 per day.",
+      "expected_source": "customer_faq.pdf"
+    },
+    {
+      "id": "Q017",
+      "question": "How do I block a lost or stolen debit card?",
+      "ground_truth": "Call the helpline 0800-ABCBANK available 24 hours 7 days a week, or block through the ABC Bank mobile app.",
+      "expected_source": "customer_faq.pdf"
+    },
+    {
+      "id": "Q018",
+      "question": "How do I file a complaint with ABC Bank?",
+      "ground_truth": "You can file a complaint by calling 0800-ABCBANK, visiting any branch, emailing complaints@abcbank.com, or using the mobile app complaint section.",
+      "expected_source": "complaint_handling_policy.pdf"
+    },
+    {
+      "id": "Q019",
+      "question": "How long does ABC Bank take to resolve a simple complaint?",
+      "ground_truth": "Simple account and transaction complaints are resolved within 3 working days.",
+      "expected_source": "complaint_handling_policy.pdf"
+    },
+    {
+      "id": "Q020",
+      "question": "What is the SBP Banking Mohtasib contact number?",
+      "ground_truth": "The SBP Banking Mohtasib contact number is 0800-200-00.",
+      "expected_source": "complaint_handling_policy.pdf"
+    },
+    {
+      "id": "Q021",
+      "question": "What is the charge for a cheque book with 25 leaves?",
+      "ground_truth": "The charge for a cheque book with 25 leaves is Rs. 500.",
+      "expected_source": "schedule_of_charges.pdf"
+    },
+    {
+      "id": "Q022",
+      "question": "What is the annual fee for a Platinum credit card?",
+      "ground_truth": "The annual fee for a Platinum credit card is Rs. 10,000.",
+      "expected_source": "credit_card_policy.pdf"
+    },
+    {
+      "id": "Q023",
+      "question": "What is the minimum age to apply for a personal loan?",
+      "ground_truth": "The minimum age to apply for a personal loan is 21 years.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q024",
+      "question": "What is the maximum loan tenure for a personal loan?",
+      "ground_truth": "The maximum loan tenure is 60 months.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q025",
+      "question": "What is the debit card replacement fee?",
+      "ground_truth": "The debit card replacement fee for lost or damaged card is Rs. 500.",
+      "expected_source": "customer_faq.pdf"
+    },
+    {
+      "id": "Q026",
+      "question": "After how many days does a loan become delinquent?",
+      "ground_truth": "A loan is considered delinquent after 30 days of missed payment.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q027",
+      "question": "What is the charge for a small locker annual rent?",
+      "ground_truth": "The small locker annual rent is Rs. 5,000.",
+      "expected_source": "schedule_of_charges.pdf"
+    },
+    {
+      "id": "Q028",
+      "question": "What is the withholding tax rate on profit for non-filers?",
+      "ground_truth": "The withholding tax rate on profit for non-filers is 30%.",
+      "expected_source": "account_opening_policy.pdf"
+    },
+    {
+      "id": "Q029",
+      "question": "What is the minimum monthly income for a salaried personal loan applicant?",
+      "ground_truth": "The minimum monthly income for a salaried personal loan applicant is Rs. 30,000.",
+      "expected_source": "loan_policy.pdf"
+    },
+    {
+      "id": "Q030",
+      "question": "How many free ATM withdrawals are allowed per month at other bank ATMs for premium accounts?",
+      "ground_truth": "Premium accounts get a maximum of 5 free transactions per month at other bank ATMs.",
+      "expected_source": "schedule_of_charges.pdf"
+    }
+  ]
+}
